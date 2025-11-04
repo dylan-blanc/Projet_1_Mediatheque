@@ -1,0 +1,30 @@
+<!-- test_escalade.html - Ouvrir dans le navigateur -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test d'escalade de privilèges</title>
+</head>
+<body>
+    <h1>Test d'ajout de média en tant qu'utilisateur simple</h1>
+    
+    <form method="POST" action="http://localhost/mediatheque-tln-grp2/media/add" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="RECUPERER_TOKEN_DEPUIS_SESSION">
+        
+        <label>Titre : <input type="text" name="titre" value="Média ajouté par utilisateur"></label><br>
+        <label>Type : 
+            <select name="type">
+                <option value="livre">Livre</option>
+                <option value="film">Film</option>
+                <option value="jeu">Jeu</option>
+            </select>
+        </label><br>
+        <label>Genre : <input type="text" name="genre" value="Test"></label><br>
+        <label>Stock : <input type="number" name="stock" value="5"></label><br>
+        
+        <!-- Champs spécifiques livre -->
+        <label>Auteur : <input type="text" name="auteur" value="Attaquant"></label><br>
+        
+        <button type="submit">Tenter l'ajout</button>
+    </form>
+</body>
+</html>

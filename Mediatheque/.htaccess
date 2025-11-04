@@ -1,0 +1,46 @@
+# ============================================
+# CONFIGURATION GÉNÉRALE
+# ============================================
+
+# Active le moteur de réécriture d'URL d'Apache
+# Permet d'utiliser des règles de réécriture pour rediriger les requêtes vers des fichiers ou dossiers sans avoir à spécifier explicitement le chemin complet.
+RewriteEngine On
+
+# ============================================
+# REDIRECTION VERS LE DOSSIER PUBLIC
+# ============================================
+
+# Conditions: si le fichier (-f) ou dossier (-d) demandé n'existe pas physiquement à la racine,
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Si les deux conditions sont vraies, rediriger la requête vers le dossier public/ (en préservant le reste de l'URL $1)
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Définit le fichier par défaut à charger si on accède à la racine du site
+# http://mediatheque-tln-grp2.test/ → charge public/index.php
+DirectoryIndex public/index.php
+
+# ============================================
+# SÉCURITÉ : BLOCAGE DES DOSSIERS SENSIBLES
+# ============================================
+
+ # Vérifier si le module de réécriture est activé
+<IfModule mod_rewrite.c>
+
+# NIVEAU 1 : Interdire l'accès aux dossiers sensibles
+# Bloque les requêtes directes vers ces dossiers
+# Exemple bloqué : http://mediatheque-tln-grp2.test/config/database.php → 403 Forbidden
+    RewriteRule ^(config|models|controllers|includes|core|views|database)/ - [F,L]
+</IfModule>
+
+# NIVEAU 2 : Interdire l'accès aux fichiers de configuration (protection supplémentaire)
+# Bloque l'accès à ces fichiers QUEL QUE SOIT leur emplacement
+# Protège contre :
+# - Copie accidentelle hors du dossier config/
+# - Les symlinks (liens symboliques)
+# - Contournement des règles de réécriture (depuis un autre .htaccess par exemple)
+<FilesMatch "^(database\.php|database_local\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
